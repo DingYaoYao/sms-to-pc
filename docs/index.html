@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>码上来 · 手机短信和验证码自动同步到电脑</title>
+<meta name="description" content="手机收到的短信和验证码，立刻出现在电脑上。局域网加密直连，不经过任何服务器。">
+<style>
+:root {
+  --brand: #4F46E5;
+  --brand-soft: #EEF0FE;
+  --bg: #FFFFFF;
+  --fg: #1C1F26;
+  --muted: #6B7280;
+  --line: #E6E8EF;
+  --soft: #F7F8FB;
+  --code-bg: #1C1F26;
+  --code-fg: #E6E8EF;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --brand: #8B83F0;
+    --brand-soft: #232544;
+    --bg: #0E1014;
+    --fg: #E7E9EE;
+    --muted: #9AA1AC;
+    --line: #272B34;
+    --soft: #16191F;
+    --code-bg: #05070A;
+    --code-fg: #D7DAE0;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.8 "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  word-break: break-word;
+}
+main { max-width: 880px; margin: 0 auto; padding: 56px 22px 96px; }
+h1 { font-size: 38px; line-height: 1.25; margin: 0 0 12px; letter-spacing: .5px; }
+h2 { font-size: 24px; margin: 56px 0 16px; padding-top: 8px; }
+h3 { font-size: 18px; margin: 34px 0 12px; color: var(--brand); }
+p { margin: 14px 0; color: var(--fg); }
+strong { font-weight: 600; }
+a { color: var(--brand); text-decoration: none; border-bottom: 1px solid transparent; }
+a:hover { border-bottom-color: currentColor; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 40px 0; }
+img {
+  display: block;
+  max-width: 100%;
+  max-height: 620px;
+  width: auto;
+  height: auto;
+  margin: 22px auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(16, 24, 40, .08);
+}
+code {
+  font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+  font-size: .92em;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+pre {
+  background: var(--code-bg);
+  color: var(--code-fg);
+  border-radius: 12px;
+  padding: 18px 20px;
+  overflow-x: auto;
+}
+pre code { background: none; border: 0; padding: 0; color: inherit; font-size: 13.5px; line-height: 1.7; }
+ul, ol { padding-left: 26px; }
+li { margin: 6px 0; }
+ul.sublist { margin: 6px 0 10px; padding-left: 26px; }
+ul.sublist li { color: var(--muted); }
+p.shot { margin: 22px 0; }
+blockquote {
+  margin: 18px 0;
+  padding: 14px 18px;
+  background: var(--soft);
+  border-left: 4px solid var(--brand);
+  border-radius: 0 10px 10px 0;
+  color: var(--muted);
+}
+blockquote p { margin: 0; color: inherit; }
+.table-wrap { overflow-x: auto; margin: 20px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { border: 1px solid var(--line); padding: 10px 14px; text-align: left; vertical-align: top; }
+th { background: var(--brand-soft); font-weight: 600; white-space: nowrap; }
+tbody tr:nth-child(even) { background: var(--soft); }
+@media (max-width: 600px) {
+  main { padding: 34px 16px 60px; }
+  h1 { font-size: 30px; }
+  h2 { font-size: 21px; margin-top: 42px; }
+  img { max-height: 460px; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>码上来</h1>
+<p><strong>手机收到的短信和验证码，无需拿出手机将会立刻出现在电脑上。</strong></p>
+<p>局域网直连 · AES-256-GCM 加密 · 不经过任何服务器 · 不收集任何数据 · 免费</p>
+<p>仓库地址：<a href="https://github.com/DingYaoYao/sms-to-pc" target="_blank" rel="noopener">https://github.com/DingYaoYao/sms-to-pc</a> ｜ 邮箱：dog8520963@163.com</p>
+<p class="shot"><img src="pc-received.png" alt="收到短信" loading="lazy"></p>
+<hr>
+<h2>它解决什么问题</h2>
+<p>登录网银、注册账号、改密码……验证码发到手机上，人却坐在电脑前。解锁手机、切到短信、记住那 6 个数字、再回到电脑——每次都这样。</p>
+<p><strong>码上来</strong>在你自己的手机和电脑之间搭一条加密的局域网通道：手机收到的每一条短信，立刻出现在电脑窗口里实现不用看手机即可接受验证码；<strong>验证码会自动高亮、自动复制到剪贴板</strong>，你直接 Ctrl+V 就行。</p>
+<p>没有账号，没有服务器，没有广告。手机和电脑连同一个 WiFi 就能用。</p>
+<hr>
+<h2>特性</h2>
+<div class="table-wrap"><table><thead><tr><th>功能</th><th>说明</th></tr></thead><tbody><tr><td>免安装</td><td>电脑端是单个 exe（自带运行时），双击就跑；手机端一个 APK</td></tr><tr><td>4 位配对码</td><td>电脑上显示 4 位数字，手机上输一次，之后自动连接</td></tr><tr><td>验证码自动复制</td><td>识别到验证码直接进剪贴板，也可以点通知一键复制</td></tr><tr><td>聊天气泡列表</td><td>短信按时间倒序，带验证码的那条高亮显示，点一下就能复制</td></tr><tr><td>关窗后台运行</td><td>电脑端右上只有"最小化"和"关于"，退出走托盘菜单，不占任务栏</td></tr><tr><td>开机自启</td><td>勾一下即可（写当前用户的启动项，不需要管理员权限）</td></tr><tr><td>贴边不打扰</td><td>无边框小窗，默认停在屏幕右下角，可以随手拖到别处</td></tr></tbody></table></div>
+<hr>
+<h2>下载</h2>
+<div class="table-wrap"><table><thead><tr><th>平台</th><th>文件</th><th>说明</th></tr></thead><tbody><tr><td>Windows 10/11 (x64)</td><td><code>mashanglai-v1.5-windows-x64.exe</code></td><td>在 <a href="https://github.com/DingYaoYao/sms-to-pc/releases" target="_blank" rel="noopener">Releases</a> 里下载，双击即用（免安装，自带运行时）</td></tr><tr><td>Android 8.0+</td><td><a href="https://github.com/DingYaoYao/sms-to-pc/blob/main/dist/%E7%A0%81%E4%B8%8A%E6%9D%A5-1.5.apk" target="_blank" rel="noopener"><code>dist/码上来-1.5.apk</code></a></td><td>在 <a href="https://github.com/DingYaoYao/sms-to-pc/releases" target="_blank" rel="noopener">Releases</a> 里下载 <code>mashanglai-v1.5-android.apk</code> 也行</td></tr></tbody></table></div>
+<blockquote>Release 里的文件名用英文（<code>mashanglai-...</code>），是为了避免部分系统下载中文名时乱码；仓库里的源码文件名仍保留中文。</blockquote>
+<blockquote>Windows 端首次运行如果弹出防火墙提示，请勾选"专用网络"并允许——不然后面手机搜不到电脑。</blockquote>
+<p><strong>国内下载（蓝奏云）</strong>：<a href="https://wwbjs.lanzoue.com/b0mcu44gj" target="_blank" rel="noopener">https://wwbjs.lanzoue.com/b0mcu44gj</a>　密码：<code>2dq1</code></p>
+<blockquote>GitHub 打不开或者下载慢的话，用上面这个链接。两边内容一样。</blockquote>
+<hr>
+<h2>使用教程</h2>
+<h3>第一步：电脑端</h3>
+<p>双击 <code>码上来.exe</code>，窗口会出现在屏幕右下角，上半部分是一个 <strong>4 位配对码</strong>（比如 <code>8252</code>），旁边写着本机地址。</p>
+<p class="shot"><img src="pc-pairing.png" alt="电脑端界面" loading="lazy"></p>
+<h3>第二步：手机端</h3>
+<ol><li>把 <code>码上来-1.5.apk</code> 传到手机，点击安装（首次需要在系统里允许"安装未知来源应用"）。</li><li>打开 App，它会依次请你开两个权限，<strong>都点允许</strong>：</li></ol>
+<ul class="sublist"><li><strong>短信权限</strong> —— 不给自己收不到任何短信</li><li><strong>后台运行</strong> —— 忽略电池优化，不然锁屏后系统会限制它（部分小米/华为等机型还会让你去开"自启动"，可以直接跳过去）</li></ul>
+<p class="shot"><img src="android-sms-permission.png" alt="短信权限" loading="lazy"></p>
+<p class="shot"><img src="android-background.png" alt="后台运行权限" loading="lazy"></p>
+<ol><li>页面会自动搜索同一 WiFi 下的电脑，搜到之后<strong>直接输入电脑上那 4 位数字</strong>，输满自动连接。</li></ol>
+<p class="shot"><img src="android-pairing.png" alt="手机与电脑配对" loading="lazy"></p>
+<blockquote>手机和电脑必须在同一个局域网（同一个路由器的 WiFi；电脑插网线、手机连同一路由器的 WiFi 也算）。不需要联网，数据不出路由器。</blockquote>
+<h3>第三步：开始用</h3>
+<p>配对成功后不用再管它。以后手机每收到一条短信，电脑窗口里立刻弹出对应的气泡：</p>
+<ul><li><strong>带验证码的</strong>会高亮显示，并且自动进了你的剪贴板，直接 Ctrl+V</li><li>电脑右下角会同时弹出系统通知，<strong>点一下通知会打开窗口并复制那条的验证码</strong></li><li>点气泡里的"复制"或点整条气泡也能再复制一次</li></ul>
+<h3>电脑端界面</h3>
+<div class="table-wrap"><table><thead><tr><th>位置</th><th>作用</th></tr></thead><tbody><tr><td>顶部</td><td>标题、连接状态、<code>关于</code> 按钮、<code>最小化</code> 按钮（<strong>没有关闭按钮</strong>，退出请用托盘图标右键 → 退出）</td></tr><tr><td>中间</td><td>收到的短信（气泡列表，越新越靠上）</td></tr><tr><td>底部</td><td><code>开机自启</code>、<code>自动复制验证码</code>、<code>清空记录</code></td></tr><tr><td>托盘图标</td><td>双击 = 把窗口叫回来；右键 = 显示窗口 / 复制配对码 / 退出</td></tr></tbody></table></div>
+<h3>手机端界面</h3>
+<ul><li>主页面只做三件事：显示连接状态、显示记录条数、检查权限（绿色=已开启，橙色=去开启）</li><li>底部 <code>关于</code> 进入独立页面：版本号、开发者、微信赞赏码、使用声明</li></ul>
+<h3>常见设置</h3>
+<ul><li><strong>不想开机启动</strong>：取消勾选底部"开机自启"即可（会同步删掉启动项）</li><li><strong>不想自动复制</strong>：取消勾选"自动复制验证码"，改成手动点气泡复制</li><li><strong>换一台电脑</strong>：新电脑上重新配对一次，手机端不用改任何设置</li><li><strong>换一个配对码</strong>：电脑端配对页点"换一个配对码"，手机上重新输一次</li></ul>
+<hr>
+<h2>常见问题</h2>
+<p><strong>手机搜不到电脑？</strong><br>确认两部设备在同一个 WiFi（手机别开热点/VPN/APN 隔离）；确认 Windows 防火墙允许了它（首次运行会弹提示）；或者用手机上的"搜不到电脑？手动填地址"，输入电脑界面显示的 IP。</p>
+<p><strong>显示"已配对"但收不到短信？</strong><br>检查主页面"短信权限"那一项是不是绿色。部分国产 ROM 还需要在「设置 → 应用 → 码上来」里允许自启动/后台运行。</p>
+<p><strong>锁屏之后还会收到吗？</strong><br>会。它用的是系统级的短信广播，不需要 App 常驻后台。但要保证：① 短信权限已给；② 电池优化已忽略。个别系统在锁屏后会断开 WiFi，那样短信会先存在手机里，等网络恢复自动补发，电脑上只是晚一点出现。</p>
+<p><strong>为什么不走蓝牙？</strong><br>车机那套读短信走的是蓝牙 MAP 协议，属于系统级能力，第三方基本复刻不了（尤其 iPhone 完全不给）。而局域网方案更快、更省电，还能全程加密。</p>
+<p><strong>iPhone 能用吗？</strong><br>不能。iOS 不向第三方开放短信内容，任何声称能做到的 App 都是假的。</p>
+<p><strong>支持 5G 消息 / RCS / iMessage 吗？</strong><br>不支持，只处理普通短信（SMS）。</p>
+<hr>
+<h2>安全说明</h2>
+<ul><li><strong>不联网</strong>：电脑端只监听局域网，手机也只连电脑的 IP，全程没有第三方服务器参与，也不会上传任何数据。</li><li><strong>正文全程加密</strong>：短信内容用 <strong>AES-256-GCM</strong> 加密后传输，同时保证机密性和完整性；被篡改的报文直接丢弃。</li><li><strong>配对码不等于密钥</strong>：配对时传的是 <code>HMAC(PBKDF2(配对码))</code>（20 万次迭代），配对成功后两边换成一串随机 32 字节长密钥，之后不再使用配对码。</li><li><strong>防猜防重放</strong>：连续 5 次输错配对码锁定 60 秒；配对报文带时间戳和随机数，重复报文会被拒绝。</li><li><strong>数据只在你自己的设备上</strong>：电脑端的记录保存在程序目录的 <code>data/</code> 文件夹里，手机端保存在应用私有目录，随时可以一键清空。</li></ul>
+<blockquote>提醒一句：验证码等于你的第二把钥匙。这套工具适合"手机在自己身上、想在大屏幕上更快更方便地复制"，<strong>不要把转发结果再同步到群聊或云端</strong>，那等于把双重验证降级成单重。</blockquote>
+<hr>
+<h2>工作原理</h2>
+<pre><code>手机(码上来 APK)  ──局域网加密──&gt;  电脑(码上来.exe)  ──自动复制──&gt;  剪贴板
+      │                                     │
+      └─ 系统短信广播 ─&gt; 队列 ─&gt; 加密        └─ 解密 ─&gt; 去重 ─&gt; 识别验证码 ─&gt; 显示</code></pre>
+<div class="table-wrap"><table><thead><tr><th>环节</th><th>做法</th></tr></thead><tbody><tr><td>找电脑</td><td>手机向局域网广播一个 UDP 包，电脑回自己的信息；也可以用 IP 手动指定</td></tr><tr><td>配对</td><td>PBKDF2-HMAC-SHA256（20 万次迭代）派生密钥 + HMAC 证明，电脑验证后回发随机长密钥</td></tr><tr><td>传短信</td><td>AES-256-GCM 加密后 POST 到电脑的 8789 端口</td></tr><tr><td>兜底</td><td>电脑没开机时短信留在手机队列里，下次有新短信或每隔 15 分钟自动补发</td></tr></tbody></table></div>
+<hr>
+<h2>项目结构</h2>
+<pre><code>android/                手机端（Kotlin，零第三方依赖）
+  app/src/main/java/com/smslink/
+    MainActivity.kt     单页主界面：配对、状态、权限
+    AboutActivity.kt    关于页面
+    Pairing.kt          配对流程
+    Crypto.kt           PBKDF2 / HMAC / AES-GCM（与电脑端一致）
+    Net.kt              局域网发现 + HTTP
+    SmsReceiver.kt      系统短信广播接收
+    Uploader.kt         加密上报 + 失败重试队列
+    Prefs.kt            本地配置
+  app/src/main/res/     布局与资源
+
+win/                    电脑端（C# / .NET 8 WinForms，零第三方依赖）
+  MainForm.cs           主窗口：气泡列表、配对、设置
+  AboutForm.cs          关于窗口
+  Protocol/
+    Server.cs           极简 HTTP 服务（只开放 3 个接口）
+    Discovery.cs        局域网发现
+    Crypto.cs           与手机端一致的加密实现
+    CodeExtractor.cs    验证码识别
+    Store.cs            配置与存档
+  Ui/                   自绘控件与配色
+  make-icon.ps1         图标生成脚本
+
+dist/                   编译好的安装包
+docs/                   赞赏码等素材</code></pre>
+<hr>
+<h2>自己编译</h2>
+<h3>电脑端（需要 .NET 8 SDK）</h3>
+<pre><code>cd win
+dotnet publish -c Release -r win-x64 --self-contained true \
+  -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true \
+  -p:IncludeNativeLibrariesForSelfExtract=true</code></pre>
+<p>产物是单个 <code>码上来.exe</code>（约 64 MB，自带运行时）。</p>
+<h3>手机端（需要 JDK 17 + Android SDK 34）</h3>
+<pre><code>cd android
+gradlew.bat assembleRelease      # macOS / Linux 用 ./gradlew</code></pre>
+<p>产物在 <code>app/build/outputs/apk/release/app-release.apk</code>。签名信息放在 <code>android/keystore.properties</code>（已在 .gitignore 里，不会进仓库）。</p>
+<hr>
+<h2>支持作者</h2>
+<p>如果这个小工具帮到了你，可以扫码请我喝杯咖啡 ☕</p>
+<p align="center">
+  <img src="sponsor-qr.jpg" width="320" alt="微信赞赏码">
+</p>
+<p align="center">开发者：Otemain ｜ 邮箱：dog8520963@163.com</p>
+<hr>
+<h2>免责声明</h2>
+<p>本软件只用于接收<strong>本人手机</strong>的短信。请勿用于监控他人设备，此类行为可能违反法律，后果自负。软件按"现状"提供，不对使用造成的任何损失承担责任。</p>
+</main>
+</body>
+</html>
