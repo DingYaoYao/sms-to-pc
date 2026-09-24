@@ -22,6 +22,9 @@ const articleMarkdown = blocks.slice(1).join('\n---\n');
 // 可能是 [文字](url) 也可能是 <url> 自动链接，两种都认
 const lanzouMatch = /[\(<](https?:\/\/[\w.-]*lanzoue\.com\/[^)>\s]+)/.exec(markdown);
 const lanzouUrl = lanzouMatch ? lanzouMatch[1] : '';
+// 顺带把分享密码也抓出来（README 里写作：密码：`2dq1`）
+const lanzouPasswordMatch = /密码[:：]\s*`?([A-Za-z0-9]{2,12})`?/.exec(markdown);
+const lanzouPassword = lanzouPasswordMatch ? lanzouPasswordMatch[1] : '';
 
 const escapeHtml = (text) =>
     text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -232,7 +235,12 @@ const heroTagline = (heroLines.find((line) => line.startsWith('**')) || '').repl
 const heroMeta = heroLines.find((line) =>
     !line.startsWith('#') && !line.startsWith('**') && !line.startsWith('![') &&
     !line.startsWith('仓库') && !line.startsWith('<')) || '';
-const heroContact = heroLines.find((line) => line.startsWith('仓库')) || '';
+// 联系方式直接从 README 里的邮箱生成，不依赖那一行的写法
+const emailMatch = /邮箱[:：]\s*([^\s，,、]+)/.exec(markdown);
+const email = emailMatch ? emailMatch[1] : '';
+const heroContact =
+    `开源仓库：<a href="${repo}" target="_blank" rel="noopener">${repo.replace('https://', '')}</a>` +
+    (email ? ` ｜ 邮箱：${escapeHtml(email)}` : '');
 const heroImageLine = heroLines.find((line) => line.startsWith('![')) || '';
 const heroImage = (/!\[([^\]]*)\]\(([^)]+)\)/.exec(heroImageLine) || []).slice(1);
 
@@ -243,6 +251,11 @@ const cta = [
     `<a class="btn" href="${releases}" target="_blank" rel="noopener">下载安卓版</a>`,
     lanzouUrl ? `<a class="btn ghost" href="${lanzouUrl}" target="_blank" rel="noopener">蓝奏云（国内）</a>` : '',
 ].filter(Boolean).join('\n        ');
+
+const lanzouNote = lanzouUrl && lanzouPassword
+    ? `<p class="hint-line">蓝奏云下载密码：<code>${escapeHtml(lanzouPassword)}</code>
+      <button class="copy" type="button" data-copy="${escapeHtml(lanzouPassword)}">复制</button></p>`
+    : '';
 
 const heroShot = heroImage.length === 2
     ? `<figure class="hero-shot"><img src="${rewriteUrl(heroImage[1])}" alt="${heroImage[0]}"></figure>`
@@ -352,6 +365,20 @@ main { max-width: 920px; margin: 0 auto; padding: 0 22px 96px; }
 .hero .meta { color: var(--muted); font-size: 14px; margin: 0 auto 28px; max-width: 680px; }
 .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
 .hero .contact { color: var(--muted); font-size: 13px; }
+.hint-line { color: var(--muted); font-size: 13.5px; margin: 6px 0 0; }
+.copy {
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--brand);
+  background: var(--brand-soft);
+  border: 1px solid rgba(124, 116, 255, .3);
+  border-radius: 999px;
+  padding: 2px 12px;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: .18s ease;
+}
+.copy:hover { background: rgba(124, 116, 255, .24); color: #fff; }
 .hero-shot { margin: 46px 0 0; }
 .hero-shot img {
   box-shadow: 0 20px 60px rgba(0, 0, 0, .55), 0 0 0 1px var(--line-strong);
@@ -504,7 +531,8 @@ footer a { color: var(--muted); }
     <div class="cta">
         ${cta}
     </div>
-    ${heroContact ? `<p class="contact">${inline(heroContact)}</p>` : ''}
+    ${lanzouNote}
+    <p class="contact">${heroContact}</p>
     ${heroShot}
   </section>
 
@@ -519,6 +547,20 @@ ${article}
 </footer>
 
 <script>
+// 复制蓝奏云密码
+for (const button of document.querySelectorAll('[data-copy]')) {
+  button.addEventListener('click', async () => {
+    const text = button.getAttribute('data-copy') || '';
+    try {
+      await navigator.clipboard.writeText(text);
+      button.textContent = '已复制';
+    } catch (_) {
+      button.textContent = text;
+    }
+    setTimeout(() => { button.textContent = '复制'; }, 1600);
+  });
+}
+
 // 滚动淡入：默认内容可见，JS 可用时才加动效
 if ('IntersectionObserver' in window) {
   const targets = document.querySelectorAll('.doc h2, .doc figure, .doc table, .doc blockquote');
