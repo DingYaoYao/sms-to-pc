@@ -4,7 +4,7 @@
 
 局域网直连 · AES-256-GCM 加密 · 不经过任何服务器 · 不收集任何数据 · 免费
 
-仓库地址：<https://github.com/DingYaoYao/sms-to-pc> ｜ 邮箱：dog8520963@163.com
+网页版：<https://dingyaoyao.github.io/sms-to-pc/>　仓库地址：<https://github.com/DingYaoYao/sms-to-pc>　邮箱：dog8520963@163.com
 
 ![收到短信](docs/pc-received.png)
 
