@@ -102,6 +102,20 @@ main { max-width: 920px; margin: 0 auto; padding: 0 22px 96px; }
 .hero .meta { color: var(--muted); font-size: 14px; margin: 0 auto 28px; max-width: 680px; }
 .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
 .hero .contact { color: var(--muted); font-size: 13px; }
+.hint-line { color: var(--muted); font-size: 13.5px; margin: 6px 0 0; }
+.copy {
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--brand);
+  background: var(--brand-soft);
+  border: 1px solid rgba(124, 116, 255, .3);
+  border-radius: 999px;
+  padding: 2px 12px;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: .18s ease;
+}
+.copy:hover { background: rgba(124, 116, 255, .24); color: #fff; }
 .hero-shot { margin: 46px 0 0; }
 .hero-shot img {
   box-shadow: 0 20px 60px rgba(0, 0, 0, .55), 0 0 0 1px var(--line-strong);
@@ -256,7 +270,9 @@ footer a { color: var(--muted); }
         <a class="btn" href="https://github.com/DingYaoYao/sms-to-pc/releases" target="_blank" rel="noopener">下载安卓版</a>
         <a class="btn ghost" href="https://wwbjs.lanzoue.com/b0mcu44gj" target="_blank" rel="noopener">蓝奏云（国内）</a>
     </div>
-    
+    <p class="hint-line">蓝奏云下载密码：<code>2dq1</code>
+      <button class="copy" type="button" data-copy="2dq1">复制</button></p>
+    <p class="contact">开源仓库：<a href="https://github.com/DingYaoYao/sms-to-pc" target="_blank" rel="noopener">github.com/DingYaoYao/sms-to-pc</a> ｜ 邮箱：dog8520963@163.com</p>
     <figure class="hero-shot"><img src="pc-received.png" alt="收到短信"></figure>
   </section>
 
@@ -374,6 +390,20 @@ gradlew.bat assembleRelease      # macOS / Linux 用 ./gradlew</code></pre>
 </footer>
 
 <script>
+// 复制蓝奏云密码
+for (const button of document.querySelectorAll('[data-copy]')) {
+  button.addEventListener('click', async () => {
+    const text = button.getAttribute('data-copy') || '';
+    try {
+      await navigator.clipboard.writeText(text);
+      button.textContent = '已复制';
+    } catch (_) {
+      button.textContent = text;
+    }
+    setTimeout(() => { button.textContent = '复制'; }, 1600);
+  });
+}
+
 // 滚动淡入：默认内容可见，JS 可用时才加动效
 if ('IntersectionObserver' in window) {
   const targets = document.querySelectorAll('.doc h2, .doc figure, .doc table, .doc blockquote');
