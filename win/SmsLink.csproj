@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>码上来</AssemblyName>
+    <RootNamespace>SmsLink</RootNamespace>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <Version>1.1.0</Version>
+    <Product>码上来</Product>
+    <AssemblyTitle>码上来</AssemblyTitle>
+    <Description>手机收到短信，电脑上直接看（局域网加密传输）</Description>
+    <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 微信赞赏码：编译进 exe，换图也行（程序目录放同名 about-qr.png 会优先用那个） -->
+    <EmbeddedResource Include="about-qr.png" />
+    <!-- 程序图标：exe 图标和窗口/托盘图标共用同一个文件，保证完全一致 -->
+    <EmbeddedResource Include="app.ico" />
+  </ItemGroup>
+
+</Project>

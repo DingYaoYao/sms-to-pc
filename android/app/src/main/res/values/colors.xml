@@ -1,0 +1,16 @@
+<resources>
+    <color name="brand">#4F46E5</color>
+    <color name="brand_dark">#4338CA</color>
+    <color name="brand_soft">#EEF0FE</color>
+    <color name="bg">#F4F5F8</color>
+    <color name="card">#FFFFFF</color>
+    <color name="card_soft">#F7F8FB</color>
+    <color name="line">#E6E8EF</color>
+    <color name="text">#1C1F26</color>
+    <color name="muted">#6B7280</color>
+    <color name="ok">#16A34A</color>
+    <color name="ok_soft">#E8F7EE</color>
+    <color name="warn">#F59E0B</color>
+    <color name="warn_soft">#FEF3E2</color>
+    <color name="danger">#DC2626</color>
+</resources>
