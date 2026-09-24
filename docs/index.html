@@ -5,137 +5,288 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>码上来 · 手机短信和验证码自动同步到电脑</title>
 <meta name="description" content="手机收到的短信和验证码，立刻出现在电脑上。局域网加密直连，不经过任何服务器。">
+<meta name="theme-color" content="#070A12">
 <style>
 :root {
-  --brand: #4F46E5;
-  --brand-soft: #EEF0FE;
-  --bg: #FFFFFF;
-  --fg: #1C1F26;
-  --muted: #6B7280;
-  --line: #E6E8EF;
-  --soft: #F7F8FB;
-  --code-bg: #1C1F26;
-  --code-fg: #E6E8EF;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --brand: #8B83F0;
-    --brand-soft: #232544;
-    --bg: #0E1014;
-    --fg: #E7E9EE;
-    --muted: #9AA1AC;
-    --line: #272B34;
-    --soft: #16191F;
-    --code-bg: #05070A;
-    --code-fg: #D7DAE0;
-  }
+  --bg: #070A12;
+  --bg-2: #0B0F1A;
+  --panel: rgba(255, 255, 255, .035);
+  --panel-strong: rgba(255, 255, 255, .06);
+  --line: rgba(255, 255, 255, .09);
+  --line-strong: rgba(255, 255, 255, .16);
+  --fg: #E9EBF2;
+  --muted: #98A1B2;
+  --brand: #7C74FF;
+  --brand-2: #22D3EE;
+  --brand-soft: rgba(124, 116, 255, .14);
+  --radius: 16px;
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
   font: 16px/1.8 "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
   word-break: break-word;
+  overflow-x: hidden;
 }
-main { max-width: 880px; margin: 0 auto; padding: 56px 22px 96px; }
-h1 { font-size: 38px; line-height: 1.25; margin: 0 0 12px; letter-spacing: .5px; }
-h2 { font-size: 24px; margin: 56px 0 16px; padding-top: 8px; }
-h3 { font-size: 18px; margin: 34px 0 12px; color: var(--brand); }
-p { margin: 14px 0; color: var(--fg); }
-strong { font-weight: 600; }
-a { color: var(--brand); text-decoration: none; border-bottom: 1px solid transparent; }
-a:hover { border-bottom-color: currentColor; }
-hr { border: 0; border-top: 1px solid var(--line); margin: 40px 0; }
-img {
+/* 技术感背景：网格 + 光晕 */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(124, 116, 255, .28), transparent 62%),
+    radial-gradient(760px 460px at 92% 4%, rgba(34, 211, 238, .18), transparent 60%),
+    radial-gradient(1100px 700px at 50% 108%, rgba(124, 116, 255, .16), transparent 60%),
+    linear-gradient(180deg, #070A12 0%, #080C16 45%, #06080F 100%);
+}
+.bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(1100px 720px at 50% 0%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(1100px 720px at 50% 0%, #000 20%, transparent 78%);
+}
+
+/* 顶栏 */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  background: rgba(7, 10, 18, .72);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.nav .brand {
+  font-weight: 700;
+  letter-spacing: .5px;
+  background: linear-gradient(92deg, var(--brand), var(--brand-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.nav nav { margin-left: auto; display: flex; gap: 18px; flex-wrap: wrap; }
+.nav nav a { color: var(--muted); font-size: 14px; border: 0; }
+.nav nav a:hover { color: var(--fg); }
+
+main { max-width: 920px; margin: 0 auto; padding: 0 22px 96px; }
+
+/* 首屏 */
+.hero { padding: 74px 0 10px; text-align: center; }
+.hero h1 {
+  font-size: 56px;
+  line-height: 1.15;
+  margin: 0 0 18px;
+  letter-spacing: 2px;
+  background: linear-gradient(96deg, #fff 8%, var(--brand) 48%, var(--brand-2) 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero .tagline { font-size: 19px; color: var(--fg); margin: 0 auto 14px; max-width: 620px; }
+.hero .meta { color: var(--muted); font-size: 14px; margin: 0 auto 28px; max-width: 680px; }
+.cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+.hero .contact { color: var(--muted); font-size: 13px; }
+.hero-shot { margin: 46px 0 0; }
+.hero-shot img {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .55), 0 0 0 1px var(--line-strong);
+}
+
+/* 按钮 */
+.btn {
+  display: inline-block;
+  padding: 13px 26px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--fg);
+  font-size: 15px;
+  background: var(--panel);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  border-bottom: 1px solid var(--line-strong);
+}
+.btn:hover { transform: translateY(-2px); border-color: var(--brand); color: #fff; }
+.btn.primary {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(96deg, var(--brand), #5B54EA 55%, var(--brand-2));
+  box-shadow: 0 10px 30px rgba(124, 116, 255, .38);
+}
+.btn.ghost { color: var(--muted); background: transparent; }
+
+/* 正文 */
+.doc h2 {
+  font-size: 25px;
+  margin: 66px 0 18px;
+  padding-left: 16px;
+  position: relative;
+}
+.doc h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .34em;
+  width: 5px;
+  height: 1.05em;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--brand), var(--brand-2));
+}
+.doc h3 { font-size: 18px; margin: 36px 0 12px; color: var(--brand); }
+.doc p { margin: 14px 0; }
+.doc strong { font-weight: 600; color: #fff; }
+.doc a { color: var(--brand); text-decoration: none; border-bottom: 1px solid rgba(124, 116, 255, .35); }
+.doc a:hover { border-bottom-color: var(--brand); }
+.doc hr { border: 0; border-top: 1px solid var(--line); margin: 46px 0; }
+
+.doc img {
   display: block;
   max-width: 100%;
-  max-height: 620px;
+  max-height: 600px;
   width: auto;
   height: auto;
-  margin: 22px auto;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, .08);
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, .5);
 }
-code {
+.doc figure, .hero-shot { display: flex; justify-content: center; margin: 26px 0; }
+
+.doc code {
   font-family: Consolas, "SFMono-Regular", Menlo, monospace;
   font-size: .92em;
-  background: var(--soft);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 1px 6px;
+  background: rgba(124, 116, 255, .14);
+  border: 1px solid rgba(124, 116, 255, .22);
+  border-radius: 7px;
+  padding: 1px 7px;
+  color: #CFCBFF;
 }
-pre {
-  background: var(--code-bg);
-  color: var(--code-fg);
-  border-radius: 12px;
+.doc pre {
+  background: rgba(0, 0, 0, .45);
+  border: 1px solid var(--line);
+  border-radius: 14px;
   padding: 18px 20px;
   overflow-x: auto;
 }
-pre code { background: none; border: 0; padding: 0; color: inherit; font-size: 13.5px; line-height: 1.7; }
-ul, ol { padding-left: 26px; }
-li { margin: 6px 0; }
-ul.sublist { margin: 6px 0 10px; padding-left: 26px; }
-ul.sublist li { color: var(--muted); }
-p.shot { margin: 22px 0; }
-blockquote {
-  margin: 18px 0;
-  padding: 14px 18px;
-  background: var(--soft);
-  border-left: 4px solid var(--brand);
-  border-radius: 0 10px 10px 0;
+.doc pre code { background: none; border: 0; padding: 0; color: #B9C0D4; font-size: 13.5px; line-height: 1.75; }
+
+.doc ul, .doc ol { padding-left: 26px; }
+.doc li { margin: 7px 0; }
+.doc ul.sublist { margin: 6px 0 10px; padding-left: 26px; }
+.doc ul.sublist li { color: var(--muted); }
+
+.doc blockquote {
+  margin: 20px 0;
+  padding: 15px 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--brand);
+  border-radius: 0 12px 12px 0;
   color: var(--muted);
 }
-blockquote p { margin: 0; color: inherit; }
-.table-wrap { overflow-x: auto; margin: 20px 0; }
-table { border-collapse: collapse; width: 100%; font-size: 15px; }
-th, td { border: 1px solid var(--line); padding: 10px 14px; text-align: left; vertical-align: top; }
-th { background: var(--brand-soft); font-weight: 600; white-space: nowrap; }
-tbody tr:nth-child(even) { background: var(--soft); }
-@media (max-width: 600px) {
-  main { padding: 34px 16px 60px; }
-  h1 { font-size: 30px; }
-  h2 { font-size: 21px; margin-top: 42px; }
-  img { max-height: 460px; }
+.doc blockquote p { margin: 0; color: inherit; }
+
+.table-wrap { overflow-x: auto; margin: 22px 0; border-radius: var(--radius); border: 1px solid var(--line); }
+.doc table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--panel); }
+.doc th, .doc td { border-bottom: 1px solid var(--line); padding: 12px 16px; text-align: left; vertical-align: top; }
+.doc th { background: var(--brand-soft); font-weight: 600; white-space: nowrap; color: #fff; }
+.doc tbody tr:last-child td { border-bottom: 0; }
+.doc tbody tr:hover td { background: rgba(255, 255, 255, .03); }
+
+footer {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 28px 22px 40px;
+}
+footer a { color: var(--muted); }
+
+/* 入场动效（无 JS 时也能看，因为默认就是可见的） */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.on { opacity: 1; transform: none; }
+
+@media (max-width: 640px) {
+  .nav nav { gap: 12px; }
+  main { padding: 0 16px 70px; }
+  .hero { padding: 44px 0 6px; }
+  .hero h1 { font-size: 38px; }
+  .hero .tagline { font-size: 16px; }
+  .doc h2 { font-size: 21px; margin-top: 48px; }
+  .doc img { max-height: 440px; }
+  .btn { padding: 12px 20px; font-size: 14px; }
 }
 </style>
 </head>
 <body>
+<div class="bg" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <span class="brand">码上来</span>
+    <nav>
+      <a href="#features">特性</a>
+      <a href="#download">下载</a>
+      <a href="#guide">教程</a>
+      <a href="#security">安全</a>
+      <a href="https://github.com/DingYaoYao/sms-to-pc" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
 <main>
-<h1>码上来</h1>
-<p><strong>手机收到的短信和验证码，无需拿出手机将会立刻出现在电脑上。</strong></p>
-<p>局域网直连 · AES-256-GCM 加密 · 不经过任何服务器 · 不收集任何数据 · 免费</p>
-<p>仓库地址：<a href="https://github.com/DingYaoYao/sms-to-pc" target="_blank" rel="noopener">https://github.com/DingYaoYao/sms-to-pc</a> ｜ 邮箱：dog8520963@163.com</p>
-<p class="shot"><img src="pc-received.png" alt="收到短信" loading="lazy"></p>
-<hr>
+  <section class="hero">
+    <h1>码上来</h1>
+    <p class="tagline">手机收到的短信和验证码，无需拿出手机将会立刻出现在电脑上。</p>
+    <p class="meta">局域网直连 · AES-256-GCM 加密 · 不经过任何服务器 · 不收集任何数据 · 免费</p>
+    <div class="cta">
+        <a class="btn primary" href="https://github.com/DingYaoYao/sms-to-pc/releases" target="_blank" rel="noopener">下载 Windows 版</a>
+        <a class="btn" href="https://github.com/DingYaoYao/sms-to-pc/releases" target="_blank" rel="noopener">下载安卓版</a>
+        <a class="btn ghost" href="https://wwbjs.lanzoue.com/b0mcu44gj" target="_blank" rel="noopener">蓝奏云（国内）</a>
+    </div>
+    <p class="contact">仓库地址：<a href="https://github.com/DingYaoYao/sms-to-pc" target="_blank" rel="noopener">https://github.com/DingYaoYao/sms-to-pc</a> ｜ 邮箱：dog8520963@163.com</p>
+    <figure class="hero-shot"><img src="pc-received.png" alt="收到短信"></figure>
+  </section>
+
+  <article class="doc">
 <h2>它解决什么问题</h2>
 <p>登录网银、注册账号、改密码……验证码发到手机上，人却坐在电脑前。解锁手机、切到短信、记住那 6 个数字、再回到电脑——每次都这样。</p>
 <p><strong>码上来</strong>在你自己的手机和电脑之间搭一条加密的局域网通道：手机收到的每一条短信，立刻出现在电脑窗口里实现不用看手机即可接受验证码；<strong>验证码会自动高亮、自动复制到剪贴板</strong>，你直接 Ctrl+V 就行。</p>
 <p>没有账号，没有服务器，没有广告。手机和电脑连同一个 WiFi 就能用。</p>
 <hr>
-<h2>特性</h2>
+<h2 id="features">特性</h2>
 <div class="table-wrap"><table><thead><tr><th>功能</th><th>说明</th></tr></thead><tbody><tr><td>免安装</td><td>电脑端是单个 exe（自带运行时），双击就跑；手机端一个 APK</td></tr><tr><td>4 位配对码</td><td>电脑上显示 4 位数字，手机上输一次，之后自动连接</td></tr><tr><td>验证码自动复制</td><td>识别到验证码直接进剪贴板，也可以点通知一键复制</td></tr><tr><td>聊天气泡列表</td><td>短信按时间倒序，带验证码的那条高亮显示，点一下就能复制</td></tr><tr><td>关窗后台运行</td><td>电脑端右上只有"最小化"和"关于"，退出走托盘菜单，不占任务栏</td></tr><tr><td>开机自启</td><td>勾一下即可（写当前用户的启动项，不需要管理员权限）</td></tr><tr><td>贴边不打扰</td><td>无边框小窗，默认停在屏幕右下角，可以随手拖到别处</td></tr></tbody></table></div>
 <hr>
-<h2>下载</h2>
+<h2 id="download">下载</h2>
 <div class="table-wrap"><table><thead><tr><th>平台</th><th>文件</th><th>说明</th></tr></thead><tbody><tr><td>Windows 10/11 (x64)</td><td><code>mashanglai-v1.5-windows-x64.exe</code></td><td>在 <a href="https://github.com/DingYaoYao/sms-to-pc/releases" target="_blank" rel="noopener">Releases</a> 里下载，双击即用（免安装，自带运行时）</td></tr><tr><td>Android 8.0+</td><td><a href="https://github.com/DingYaoYao/sms-to-pc/blob/main/dist/%E7%A0%81%E4%B8%8A%E6%9D%A5-1.5.apk" target="_blank" rel="noopener"><code>dist/码上来-1.5.apk</code></a></td><td>在 <a href="https://github.com/DingYaoYao/sms-to-pc/releases" target="_blank" rel="noopener">Releases</a> 里下载 <code>mashanglai-v1.5-android.apk</code> 也行</td></tr></tbody></table></div>
 <blockquote>Release 里的文件名用英文（<code>mashanglai-...</code>），是为了避免部分系统下载中文名时乱码；仓库里的源码文件名仍保留中文。</blockquote>
 <blockquote>Windows 端首次运行如果弹出防火墙提示，请勾选"专用网络"并允许——不然后面手机搜不到电脑。</blockquote>
 <p><strong>国内下载（蓝奏云）</strong>：<a href="https://wwbjs.lanzoue.com/b0mcu44gj" target="_blank" rel="noopener">https://wwbjs.lanzoue.com/b0mcu44gj</a>　密码：<code>2dq1</code></p>
 <blockquote>GitHub 打不开或者下载慢的话，用上面这个链接。两边内容一样。</blockquote>
 <hr>
-<h2>使用教程</h2>
+<h2 id="guide">使用教程</h2>
 <h3>第一步：电脑端</h3>
 <p>双击 <code>码上来.exe</code>，窗口会出现在屏幕右下角，上半部分是一个 <strong>4 位配对码</strong>（比如 <code>8252</code>），旁边写着本机地址。</p>
-<p class="shot"><img src="pc-pairing.png" alt="电脑端界面" loading="lazy"></p>
+<figure><img src="pc-pairing.png" alt="电脑端界面" loading="lazy"></figure>
 <h3>第二步：手机端</h3>
 <ol><li>把 <code>码上来-1.5.apk</code> 传到手机，点击安装（首次需要在系统里允许"安装未知来源应用"）。</li><li>打开 App，它会依次请你开两个权限，<strong>都点允许</strong>：</li></ol>
 <ul class="sublist"><li><strong>短信权限</strong> —— 不给自己收不到任何短信</li><li><strong>后台运行</strong> —— 忽略电池优化，不然锁屏后系统会限制它（部分小米/华为等机型还会让你去开"自启动"，可以直接跳过去）</li></ul>
-<p class="shot"><img src="android-sms-permission.png" alt="短信权限" loading="lazy"></p>
-<p class="shot"><img src="android-background.png" alt="后台运行权限" loading="lazy"></p>
+<figure><img src="android-sms-permission.png" alt="短信权限" loading="lazy"></figure>
+<figure><img src="android-background.png" alt="后台运行权限" loading="lazy"></figure>
 <ol><li>页面会自动搜索同一 WiFi 下的电脑，搜到之后<strong>直接输入电脑上那 4 位数字</strong>，输满自动连接。</li></ol>
-<p class="shot"><img src="android-pairing.png" alt="手机与电脑配对" loading="lazy"></p>
+<figure><img src="android-pairing.png" alt="手机与电脑配对" loading="lazy"></figure>
 <blockquote>手机和电脑必须在同一个局域网（同一个路由器的 WiFi；电脑插网线、手机连同一路由器的 WiFi 也算）。不需要联网，数据不出路由器。</blockquote>
 <h3>第三步：开始用</h3>
 <p>配对成功后不用再管它。以后手机每收到一条短信，电脑窗口里立刻弹出对应的气泡：</p>
@@ -147,7 +298,7 @@ tbody tr:nth-child(even) { background: var(--soft); }
 <h3>常见设置</h3>
 <ul><li><strong>不想开机启动</strong>：取消勾选底部"开机自启"即可（会同步删掉启动项）</li><li><strong>不想自动复制</strong>：取消勾选"自动复制验证码"，改成手动点气泡复制</li><li><strong>换一台电脑</strong>：新电脑上重新配对一次，手机端不用改任何设置</li><li><strong>换一个配对码</strong>：电脑端配对页点"换一个配对码"，手机上重新输一次</li></ul>
 <hr>
-<h2>常见问题</h2>
+<h2 id="faq">常见问题</h2>
 <p><strong>手机搜不到电脑？</strong><br>确认两部设备在同一个 WiFi（手机别开热点/VPN/APN 隔离）；确认 Windows 防火墙允许了它（首次运行会弹提示）；或者用手机上的"搜不到电脑？手动填地址"，输入电脑界面显示的 IP。</p>
 <p><strong>显示"已配对"但收不到短信？</strong><br>检查主页面"短信权限"那一项是不是绿色。部分国产 ROM 还需要在「设置 → 应用 → 码上来」里允许自启动/后台运行。</p>
 <p><strong>锁屏之后还会收到吗？</strong><br>会。它用的是系统级的短信广播，不需要 App 常驻后台。但要保证：① 短信权限已给；② 电池优化已忽略。个别系统在锁屏后会断开 WiFi，那样短信会先存在手机里，等网络恢复自动补发，电脑上只是晚一点出现。</p>
@@ -155,11 +306,11 @@ tbody tr:nth-child(even) { background: var(--soft); }
 <p><strong>iPhone 能用吗？</strong><br>不能。iOS 不向第三方开放短信内容，任何声称能做到的 App 都是假的。</p>
 <p><strong>支持 5G 消息 / RCS / iMessage 吗？</strong><br>不支持，只处理普通短信（SMS）。</p>
 <hr>
-<h2>安全说明</h2>
+<h2 id="security">安全说明</h2>
 <ul><li><strong>不联网</strong>：电脑端只监听局域网，手机也只连电脑的 IP，全程没有第三方服务器参与，也不会上传任何数据。</li><li><strong>正文全程加密</strong>：短信内容用 <strong>AES-256-GCM</strong> 加密后传输，同时保证机密性和完整性；被篡改的报文直接丢弃。</li><li><strong>配对码不等于密钥</strong>：配对时传的是 <code>HMAC(PBKDF2(配对码))</code>（20 万次迭代），配对成功后两边换成一串随机 32 字节长密钥，之后不再使用配对码。</li><li><strong>防猜防重放</strong>：连续 5 次输错配对码锁定 60 秒；配对报文带时间戳和随机数，重复报文会被拒绝。</li><li><strong>数据只在你自己的设备上</strong>：电脑端的记录保存在程序目录的 <code>data/</code> 文件夹里，手机端保存在应用私有目录，随时可以一键清空。</li></ul>
 <blockquote>提醒一句：验证码等于你的第二把钥匙。这套工具适合"手机在自己身上、想在大屏幕上更快更方便地复制"，<strong>不要把转发结果再同步到群聊或云端</strong>，那等于把双重验证降级成单重。</blockquote>
 <hr>
-<h2>工作原理</h2>
+<h2 id="how">工作原理</h2>
 <pre><code>手机(码上来 APK)  ──局域网加密──&gt;  电脑(码上来.exe)  ──自动复制──&gt;  剪贴板
       │                                     │
       └─ 系统短信广播 ─&gt; 队列 ─&gt; 加密        └─ 解密 ─&gt; 去重 ─&gt; 识别验证码 ─&gt; 显示</code></pre>
@@ -214,6 +365,31 @@ gradlew.bat assembleRelease      # macOS / Linux 用 ./gradlew</code></pre>
 <hr>
 <h2>免责声明</h2>
 <p>本软件只用于接收<strong>本人手机</strong>的短信。请勿用于监控他人设备，此类行为可能违反法律，后果自负。软件按"现状"提供，不对使用造成的任何损失承担责任。</p>
+  </article>
 </main>
+
+<footer>
+  码上来 · <a href="https://github.com/DingYaoYao/sms-to-pc" target="_blank" rel="noopener">GitHub 仓库</a> ·
+  <a href="https://github.com/DingYaoYao/sms-to-pc/releases" target="_blank" rel="noopener">下载</a>
+</footer>
+
+<script>
+// 滚动淡入：默认内容可见，JS 可用时才加动效
+if ('IntersectionObserver' in window) {
+  const targets = document.querySelectorAll('.doc h2, .doc figure, .doc table, .doc blockquote');
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('on');
+        observer.unobserve(entry.target);
+      }
+    }
+  }, { rootMargin: '0px 0px -8% 0px', threshold: .05 });
+  for (const target of targets) {
+    target.classList.add('reveal');
+    observer.observe(target);
+  }
+}
+</script>
 </body>
 </html>
